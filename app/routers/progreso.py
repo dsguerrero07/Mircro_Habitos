@@ -8,7 +8,7 @@ router = APIRouter(
 """
 Archivo: progreso.py
 Descripción: Rutas (endpoints) para manejar el progreso de los usuarios en los micro retos.
-Autor: Duván Guerrero
+
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status

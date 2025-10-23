@@ -1,7 +1,7 @@
 """
 Archivo: main.py
 Descripción: Inicia la aplicación FastAPI y conecta los routers
-Autor: Duván Guerrero
+
 """
 
 from fastapi import FastAPI

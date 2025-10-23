@@ -8,7 +8,7 @@ router = APIRouter(
 """
 Archivo: microrreto.py
 Descripción: Rutas (endpoints) para manejar los micro retos educativos.
-Autor: Duván Guerrero
+
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status

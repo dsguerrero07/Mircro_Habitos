@@ -1,7 +1,7 @@
 """
 Archivo: models.py
 Descripción: Define las tablas de la base de datos y sus relaciones
-Autor: Duván Guerrero
+
 """
 
 from sqlalchemy import Column, Integer, String, ForeignKey, Date

@@ -1,7 +1,7 @@
 """
 Archivo: schemas.py
 Descripción: Modelos de validación de datos (entrada y salida)
-Autor: Duván Guerrero
+
 """
 
 from pydantic import BaseModel

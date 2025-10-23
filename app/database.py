@@ -1,7 +1,7 @@
 """
 Archivo: database.py
 Descripción: Configura la conexión con la base de datos (SQLite)
-Autor: Duván Guerrero
+
 """
 
 from sqlalchemy import create_engine

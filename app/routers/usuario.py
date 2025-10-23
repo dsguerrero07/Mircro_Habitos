@@ -1,7 +1,7 @@
 """
 Archivo: usuario.py
 Descripción: Rutas (endpoints) para manejar usuarios en la plataforma.
-Autor: Duván Guerrero
+
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status

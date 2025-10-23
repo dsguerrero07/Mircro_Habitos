@@ -8,7 +8,7 @@ router = APIRouter(
 """
 Archivo: comunidad.py
 Descripción: Rutas (endpoints) para manejar las comunidades y retos grupales.
-Autor: Duván Guerrero
+
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status

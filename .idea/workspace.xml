@@ -4,23 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ddcb2762-00e4-4762-b7e9-e60bd1b73ce5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/MicroHabitos.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/_init_.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/database.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/_init_.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/comunidad.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/gamificacion.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/microrreto.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/progreso.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/usuario.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/schemas.py" afterDir="false" />
+    <list default="true" id="ddcb2762-00e4-4762-b7e9-e60bd1b73ce5" name="Changes" comment="desarrollo de proyecto integrador">
+      <change beforePath="$PROJECT_DIR$/app/routers/gamificacion.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/gamificacion.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,8 +20,26 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--tags" />
+        <option name="title" value="All" />
+      </GitPushTagMode>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "dsguerrero07"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/dsguerrero07/Mircro_Habitos.git",
+    "accountId": "83b0a171-acf3-41d4-8f98-1f834b3c3a46"
+  }
+}]]></component>
   <component name="ProjectColorInfo"><![CDATA[{
   "associatedIndex": 6
 }]]></component>
@@ -76,6 +79,19 @@
       <option name="presentableId" value="Default" />
       <updated>1761187086016</updated>
     </task>
+    <task id="LOCAL-00001" summary="desarrollo de proyecto integrador">
+      <option name="closed" value="true" />
+      <created>1761254429745</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1761254429745</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="desarrollo de proyecto integrador" />
+    <option name="LAST_COMMIT_MESSAGE" value="desarrollo de proyecto integrador" />
   </component>
 </project>
