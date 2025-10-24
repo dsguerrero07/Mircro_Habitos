@@ -6,11 +6,12 @@ Descripción: Inicia la aplicación FastAPI y conecta los routers
 
 from fastapi import FastAPI
 from app import models, database
-from app.routers import usuario
-from app.routers import microrreto
+from app.routers import usuarios
+from app.routers import microrretos
 from app.routers import progreso
 from app.routers import gamificacion
 from app.routers import comunidad
+from app.routers import reportes
 
 # Crea las tablas en la base de datos
 models.Base.metadata.create_all(bind=database.engine)
@@ -23,8 +24,9 @@ app = FastAPI(
 )
 
 # Conecta las rutas (routers)
-app.include_router(usuario.router)
-app.include_router(microrreto.router)
+app.include_router(usuarios.router)
+app.include_router(microrretos.router)
 app.include_router(progreso.router)
 app.include_router(gamificacion.router)
 app.include_router(comunidad.router)
+app.include_router(reportes.router)

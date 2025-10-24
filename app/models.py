@@ -4,10 +4,10 @@ Descripción: Define las tablas de la base de datos y sus relaciones
 
 """
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from app.database import Base
-
+from datetime import datetime
 # --------------------------------------------------------
 # Tabla de Usuarios
 # --------------------------------------------------------
@@ -15,23 +15,23 @@ class Usuario(Base):
     __tablename__ = "usuarios"
 
     id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String)
+    nombre = Column(String, nullable=False)
     edad = Column(Integer)
     categoria = Column(String)
-    nivel = Column(String)
+    nivel = Column(Integer, default=1)
     racha_dias = Column(Integer, default=0)
     puntos = Column(Integer, default=0)
 
-    # Relaciones con otras tablas
-    progresos = relationship("Progreso", back_populates="usuario")
-    gamificaciones = relationship("Gamificacion", back_populates="usuario")
-    comunidades = relationship("Comunidad", back_populates="usuario")
+    activo = Column(Boolean, default=True)
 
-# --------------------------------------------------------
-# Tabla de MicroRetos
-# --------------------------------------------------------
+    # Relaciones
+    progreso = relationship("Progreso", back_populates="usuario")
+    gamificacion = relationship("Gamificacion", back_populates="usuario", uselist=False)
+    comunidades = relationship("Comunidad", secondary="usuarios_comunidad", back_populates="participantes")
+
+
 class MicroReto(Base):
-    __tablename__ = "microretos"
+    __tablename__ = "microrretos"
 
     id = Column(Integer, primary_key=True, index=True)
     categoria = Column(String)
@@ -39,47 +39,50 @@ class MicroReto(Base):
     contenido = Column(String)
     respuesta = Column(String)
 
-    progresos = relationship("Progreso", back_populates="microrreto")
+    progreso = relationship("Progreso", back_populates="reto")
 
-# --------------------------------------------------------
-# Tabla de Progreso
-# --------------------------------------------------------
+
 class Progreso(Base):
-    __tablename__ = "progresos"
+    __tablename__ = "progreso"
 
     id = Column(Integer, primary_key=True, index=True)
     usuario_id = Column(Integer, ForeignKey("usuarios.id"))
-    reto_id = Column(Integer, ForeignKey("microretos.id"))
-    completado = Column(String)
-    fecha = Column(Date)
+    reto_id = Column(Integer, ForeignKey("microrretos.id"))
+    completado = Column(Boolean, default=False)
+    fecha = Column(DateTime, default=datetime.utcnow)
 
-    usuario = relationship("Usuario", back_populates="progresos")
-    microrreto = relationship("MicroReto", back_populates="progresos")
+    usuario = relationship("Usuario", back_populates="progreso")
+    reto = relationship("MicroReto", back_populates="progreso")
 
-# --------------------------------------------------------
-# Tabla de Gamificación
-# --------------------------------------------------------
+
 class Gamificacion(Base):
-    __tablename__ = "gamificaciones"
+    __tablename__ = "gamificacion"
 
     id = Column(Integer, primary_key=True, index=True)
     usuario_id = Column(Integer, ForeignKey("usuarios.id"))
-    badge = Column(String)
-    puntos = Column(Integer)
+    badge = Column(String, default="Ninguno")
+    puntos = Column(Integer, default=0)
 
-    usuario = relationship("Usuario", back_populates="gamificaciones")
+    usuario = relationship("Usuario", back_populates="gamificacion")
 
-# --------------------------------------------------------
-# Tabla de Comunidad
-# --------------------------------------------------------
+
 class Comunidad(Base):
     __tablename__ = "comunidades"
 
     id = Column(Integer, primary_key=True, index=True)
-    usuario_id = Column(Integer, ForeignKey("usuarios.id"))
     nombre_reto = Column(String)
     categoria = Column(String)
-    duracion = Column(String)
-    participantes = Column(Integer)
+    duracion = Column(Integer)
 
-    usuario = relationship("Usuario", back_populates="comunidades")
+    participantes = relationship("Usuario", secondary="usuarios_comunidad", back_populates="comunidades")
+
+
+# Tabla intermedia N:M para comunidad
+from sqlalchemy import Table, MetaData
+
+usuarios_comunidad = Table(
+    "usuarios_comunidad",
+    Base.metadata,
+    Column("usuario_id", Integer, ForeignKey("usuarios.id")),
+    Column("comunidad_id", Integer, ForeignKey("comunidades.id"))
+)

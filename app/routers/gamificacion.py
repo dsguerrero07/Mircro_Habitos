@@ -1,92 +1,102 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app import models, schemas, database
+from app import models, schemas
+from app.database import get_db
 
-# Crear el router
 router = APIRouter(
     prefix="/gamificacion",
     tags=["Gamificación"]
 )
 
-# Conexión con la base de datos
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-# -------------------------------
-# Modelos Pydantic de actualización
-# -------------------------------
-class GamificacionUpdateModel(schemas.BaseModel):
-    usuario_id: int | None = None
-    badge: str | None = None
-    puntos: int | None = None
-
 # --------------------------------------------------------------
-# 1️⃣ Crear una recompensa o insignia (POST)
+# Crear registro de gamificación para un usuario (POST)
 # --------------------------------------------------------------
 @router.post("/", response_model=schemas.Gamificacion, status_code=status.HTTP_201_CREATED)
-def crear_gamificacion(gamificacion: schemas.GamificacionCreate, db: Session = Depends(get_db)):
-    usuario = db.query(models.Usuario).filter(models.Usuario.id == gamificacion.usuario_id).first()
+def crear_gamificacion(data: schemas.GamificacionCreate, db: Session = Depends(get_db)):
+    """
+    Crea o asigna un sistema de puntos y logros a un usuario.
+    """
+
+    # Validar que el usuario exista
+    usuario = db.query(models.Usuario).filter(models.Usuario.id == data.usuario_id).first()
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
-    nueva_gamificacion = models.Gamificacion(
-        usuario_id=gamificacion.usuario_id,
-        badge=gamificacion.badge,
-        puntos=gamificacion.puntos
+    # Verificar si ya tiene gamificación asignada
+    existe = db.query(models.Gamificacion).filter(models.Gamificacion.usuario_id == data.usuario_id).first()
+    if existe:
+        raise HTTPException(status_code=400, detail="Este usuario ya tiene gamificación registrada")
+
+    nuevo = models.Gamificacion(
+        usuario_id=data.usuario_id,
+        badge=data.badge,
+        puntos=data.puntos
     )
 
-    db.add(nueva_gamificacion)
+    db.add(nuevo)
     db.commit()
-    db.refresh(nueva_gamificacion)
-    return nueva_gamificacion
+    db.refresh(nuevo)
+    return nuevo
+
 
 # --------------------------------------------------------------
-# 2️⃣ Listar todas las recompensas (GET)
+# Ver gamificación de todos los usuarios (GET)
 # --------------------------------------------------------------
 @router.get("/", response_model=list[schemas.Gamificacion])
-def listar_gamificaciones(db: Session = Depends(get_db)):
+def obtener_gamificaciones(db: Session = Depends(get_db)):
     return db.query(models.Gamificacion).all()
 
+
 # --------------------------------------------------------------
-# 3️⃣ Obtener gamificación por ID (GET)
+# Ver gamificación de un usuario específico (GET)
 # --------------------------------------------------------------
-@router.get("/{gamificacion_id}", response_model=schemas.Gamificacion)
-def obtener_gamificacion(gamificacion_id: int, db: Session = Depends(get_db)):
-    gamificacion = db.query(models.Gamificacion).filter(models.Gamificacion.id == gamificacion_id).first()
+@router.get("/{usuario_id}", response_model=schemas.Gamificacion)
+def obtener_gamificacion(usuario_id: int, db: Session = Depends(get_db)):
+    gamificacion = db.query(models.Gamificacion).filter(models.Gamificacion.usuario_id == usuario_id).first()
     if not gamificacion:
-        raise HTTPException(status_code=404, detail="Registro de gamificación no encontrado")
+        raise HTTPException(status_code=404, detail="Este usuario no tiene gamificación registrada")
     return gamificacion
 
+
 # --------------------------------------------------------------
-# 4️⃣ Actualizar gamificación (PUT)
+# Añadir puntos a un usuario (PATCH)
 # --------------------------------------------------------------
-@router.put("/{gamificacion_id}", response_model=schemas.Gamificacion)
-def actualizar_gamificacion(gamificacion_id: int, datos: GamificacionUpdateModel, db: Session = Depends(get_db)):
-    gamificacion = db.query(models.Gamificacion).filter(models.Gamificacion.id == gamificacion_id).first()
+@router.patch("/{usuario_id}/sumar-puntos", response_model=schemas.Gamificacion)
+def sumar_puntos(usuario_id: int, puntos: int, db: Session = Depends(get_db)):
+    gamificacion = db.query(models.Gamificacion).filter(models.Gamificacion.usuario_id == usuario_id).first()
     if not gamificacion:
-        raise HTTPException(status_code=404, detail="Registro de gamificación no encontrado")
+        raise HTTPException(status_code=404, detail="Gamificación no encontrada")
 
-    # Actualizar solo los campos enviados
-    for key, value in datos.dict(exclude_unset=True).items():
-        setattr(gamificacion, key, value)
-
+    gamificacion.puntos += puntos
     db.commit()
     db.refresh(gamificacion)
     return gamificacion
 
+
 # --------------------------------------------------------------
-# 5️⃣ Eliminar gamificación (DELETE)
+# Cambiar badge (PATCH)
 # --------------------------------------------------------------
-@router.delete("/{gamificacion_id}", status_code=status.HTTP_204_NO_CONTENT)
-def eliminar_gamificacion(gamificacion_id: int, db: Session = Depends(get_db)):
-    gamificacion = db.query(models.Gamificacion).filter(models.Gamificacion.id == gamificacion_id).first()
+@router.patch("/{usuario_id}/cambiar-badge", response_model=schemas.Gamificacion)
+def cambiar_badge(usuario_id: int, badge: str, db: Session = Depends(get_db)):
+    gamificacion = db.query(models.Gamificacion).filter(models.Gamificacion.usuario_id == usuario_id).first()
     if not gamificacion:
-        raise HTTPException(status_code=404, detail="Registro de gamificación no encontrado")
+        raise HTTPException(status_code=404, detail="Gamificación no encontrada")
+
+    gamificacion.badge = badge
+    db.commit()
+    db.refresh(gamificacion)
+    return gamificacion
+
+
+# --------------------------------------------------------------
+# Eliminar registro de gamificación (DELETE)
+# --------------------------------------------------------------
+@router.delete("/{usuario_id}", status_code=status.HTTP_200_OK)
+def eliminar_gamificacion(usuario_id: int, db: Session = Depends(get_db)):
+    gamificacion = db.query(models.Gamificacion).filter(models.Gamificacion.usuario_id == usuario_id).first()
+    if not gamificacion:
+        raise HTTPException(status_code=404, detail="Gamificación no encontrada")
+
     db.delete(gamificacion)
     db.commit()
-    return None
-
+    return {"mensaje": f"Registro de gamificación del usuario {usuario_id} eliminado correctamente."}

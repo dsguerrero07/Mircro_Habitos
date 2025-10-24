@@ -1,53 +1,22 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from app import models, schemas
+from app.database import get_db
 
 router = APIRouter(
     prefix="/comunidad",
     tags=["Comunidad"]
 )
 
-"""
-Archivo: comunidad.py
-Descripción: Rutas (endpoints) para manejar las comunidades y retos grupales.
-
-"""
-
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from app import models, schemas, database
-
-# Crear el router
-router = APIRouter(
-    prefix="/comunidades",
-    tags=["Comunidades"]
-)
-
-# Conexión con la base de datos
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 # --------------------------------------------------------------
-# 1️⃣ Crear una comunidad (POST)
+# Crear comunidad (POST)
 # --------------------------------------------------------------
 @router.post("/", response_model=schemas.Comunidad, status_code=status.HTTP_201_CREATED)
-def crear_comunidad(comunidad: schemas.ComunidadCreate, db: Session = Depends(get_db)):
-    """
-    Crea una nueva comunidad o reto grupal.
-    """
-    # Verificar si el usuario creador existe
-    usuario = db.query(models.Usuario).filter(models.Usuario.id == comunidad.usuario_id).first()
-    if not usuario:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-
+def crear_comunidad(data: schemas.ComunidadCreate, db: Session = Depends(get_db)):
     nueva_comunidad = models.Comunidad(
-        usuario_id=comunidad.usuario_id,
-        nombre_reto=comunidad.nombre_reto,
-        categoria=comunidad.categoria,
-        duracion=comunidad.duracion,
-        participantes=comunidad.participantes
+        nombre_reto=data.nombre_reto,
+        categoria=data.categoria,
+        duracion=data.duracion
     )
 
     db.add(nueva_comunidad)
@@ -57,25 +26,18 @@ def crear_comunidad(comunidad: schemas.ComunidadCreate, db: Session = Depends(ge
 
 
 # --------------------------------------------------------------
-# 2️⃣ Listar todas las comunidades (GET)
+# Listar comunidades (GET)
 # --------------------------------------------------------------
 @router.get("/", response_model=list[schemas.Comunidad])
 def listar_comunidades(db: Session = Depends(get_db)):
-    """
-    Devuelve todas las comunidades creadas en la plataforma.
-    """
-    comunidades = db.query(models.Comunidad).all()
-    return comunidades
+    return db.query(models.Comunidad).all()
 
 
 # --------------------------------------------------------------
-# 3️⃣ Obtener comunidad por ID (GET)
+# Obtener comunidad por ID (GET)
 # --------------------------------------------------------------
 @router.get("/{comunidad_id}", response_model=schemas.Comunidad)
 def obtener_comunidad(comunidad_id: int, db: Session = Depends(get_db)):
-    """
-    Devuelve la información de una comunidad específica.
-    """
     comunidad = db.query(models.Comunidad).filter(models.Comunidad.id == comunidad_id).first()
     if not comunidad:
         raise HTTPException(status_code=404, detail="Comunidad no encontrada")
@@ -83,40 +45,68 @@ def obtener_comunidad(comunidad_id: int, db: Session = Depends(get_db)):
 
 
 # --------------------------------------------------------------
-# 4️⃣ Actualizar comunidad (PUT)
+# Ver participantes de una comunidad (GET)
 # --------------------------------------------------------------
-@router.put("/{comunidad_id}", response_model=schemas.Comunidad)
-def actualizar_comunidad(comunidad_id: int, datos: schemas.ComunidadCreate, db: Session = Depends(get_db)):
-    """
-    Actualiza la información de una comunidad existente.
-    """
+@router.get("/{comunidad_id}/participantes")
+def obtener_participantes(comunidad_id: int, db: Session = Depends(get_db)):
     comunidad = db.query(models.Comunidad).filter(models.Comunidad.id == comunidad_id).first()
     if not comunidad:
         raise HTTPException(status_code=404, detail="Comunidad no encontrada")
+    return comunidad.participantes
 
-    comunidad.usuario_id = datos.usuario_id
-    comunidad.nombre_reto = datos.nombre_reto
-    comunidad.categoria = datos.categoria
-    comunidad.duracion = datos.duracion
-    comunidad.participantes = datos.participantes
 
+# --------------------------------------------------------------
+# Agregar usuario a comunidad (POST)
+# --------------------------------------------------------------
+@router.post("/{comunidad_id}/agregar/{usuario_id}", status_code=status.HTTP_200_OK)
+def agregar_usuario(comunidad_id: int, usuario_id: int, db: Session = Depends(get_db)):
+    comunidad = db.query(models.Comunidad).filter(models.Comunidad.id == comunidad_id).first()
+    usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
+
+    if not comunidad:
+        raise HTTPException(status_code=404, detail="Comunidad no encontrada")
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    # Evitar duplicados
+    if usuario in comunidad.participantes:
+        raise HTTPException(status_code=400, detail="El usuario ya está en esta comunidad")
+
+    comunidad.participantes.append(usuario)
     db.commit()
-    db.refresh(comunidad)
-    return comunidad
+    return {"mensaje": f"Usuario {usuario_id} agregado a la comunidad {comunidad_id}."}
 
 
 # --------------------------------------------------------------
-# 5️⃣ Eliminar comunidad (DELETE)
+# Remover usuario de comunidad (DELETE)
 # --------------------------------------------------------------
-@router.delete("/{comunidad_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{comunidad_id}/remover/{usuario_id}", status_code=status.HTTP_200_OK)
+def eliminar_usuario(comunidad_id: int, usuario_id: int, db: Session = Depends(get_db)):
+    comunidad = db.query(models.Comunidad).filter(models.Comunidad.id == comunidad_id).first()
+    usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
+
+    if not comunidad:
+        raise HTTPException(status_code=404, detail="Comunidad no encontrada")
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    if usuario not in comunidad.participantes:
+        raise HTTPException(status_code=400, detail="El usuario no está en esta comunidad")
+
+    comunidad.participantes.remove(usuario)
+    db.commit()
+    return {"mensaje": f"Usuario {usuario_id} eliminado de la comunidad {comunidad_id}."}
+
+
+# --------------------------------------------------------------
+# Eliminar comunidad por completo (DELETE)
+# --------------------------------------------------------------
+@router.delete("/{comunidad_id}")
 def eliminar_comunidad(comunidad_id: int, db: Session = Depends(get_db)):
-    """
-    Elimina una comunidad de la base de datos.
-    """
     comunidad = db.query(models.Comunidad).filter(models.Comunidad.id == comunidad_id).first()
     if not comunidad:
         raise HTTPException(status_code=404, detail="Comunidad no encontrada")
 
     db.delete(comunidad)
     db.commit()
-    return None
+    return {"mensaje": f"Comunidad {comunidad_id} eliminada correctamente."}

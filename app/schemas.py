@@ -3,9 +3,8 @@ Archivo: schemas.py
 Descripción: Modelos de validación de datos (entrada y salida)
 
 """
-
 from pydantic import BaseModel
-from datetime import date
+from datetime import datetime
 
 # --------------------------------------------------------
 # Usuario
@@ -14,7 +13,7 @@ class UsuarioBase(BaseModel):
     nombre: str
     edad: int
     categoria: str
-    nivel: str
+    nivel: int = 1
     racha_dias: int = 0
     puntos: int = 0
 
@@ -25,6 +24,7 @@ class Usuario(UsuarioBase):
     id: int
     class Config:
         from_attributes = True
+
 
 # --------------------------------------------------------
 # MicroReto
@@ -43,14 +43,15 @@ class MicroReto(MicroRetoBase):
     class Config:
         from_attributes = True
 
+
 # --------------------------------------------------------
 # Progreso
 # --------------------------------------------------------
 class ProgresoBase(BaseModel):
     usuario_id: int
     reto_id: int
-    completado: str
-    fecha: date
+    completado: bool = False
+    fecha: datetime = datetime.utcnow()
 
 class ProgresoCreate(ProgresoBase):
     pass
@@ -60,13 +61,14 @@ class Progreso(ProgresoBase):
     class Config:
         from_attributes = True
 
+
 # --------------------------------------------------------
 # Gamificación
 # --------------------------------------------------------
 class GamificacionBase(BaseModel):
     usuario_id: int
-    badge: str
-    puntos: int
+    badge: str = "Ninguno"
+    puntos: int = 0
 
 class GamificacionCreate(GamificacionBase):
     pass
@@ -76,15 +78,14 @@ class Gamificacion(GamificacionBase):
     class Config:
         from_attributes = True
 
+
 # --------------------------------------------------------
 # Comunidad
 # --------------------------------------------------------
 class ComunidadBase(BaseModel):
-    usuario_id: int
     nombre_reto: str
     categoria: str
-    duracion: str
-    participantes: int
+    duracion: int  # Días o semanas
 
 class ComunidadCreate(ComunidadBase):
     pass
@@ -93,3 +94,4 @@ class Comunidad(ComunidadBase):
     id: int
     class Config:
         from_attributes = True
+
