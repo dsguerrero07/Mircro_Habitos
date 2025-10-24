@@ -14,6 +14,7 @@ router = APIRouter(
     tags=["Usuarios"]            # Nombre del grupo en Swagger (docs)
 )
 
+
 # Dependencia: conexión con la base de datos
 def get_db():
     db = database.SessionLocal()
@@ -23,7 +24,7 @@ def get_db():
         db.close()
 
 # --------------------------------------------------------------
-# 1️⃣ Crear usuario (POST)
+#  Crear usuario (POST)
 # --------------------------------------------------------------
 @router.post("/", response_model=schemas.Usuario, status_code=status.HTTP_201_CREATED)
 def crear_usuario(usuario: schemas.UsuarioCreate, db: Session = Depends(get_db)):
@@ -50,7 +51,7 @@ def crear_usuario(usuario: schemas.UsuarioCreate, db: Session = Depends(get_db))
 
 
 # --------------------------------------------------------------
-# 2️⃣ Listar usuarios (GET)
+#  Listar usuarios (GET)
 # --------------------------------------------------------------
 @router.get("/", response_model=list[schemas.Usuario])
 def obtener_usuarios(db: Session = Depends(get_db)):
@@ -62,7 +63,7 @@ def obtener_usuarios(db: Session = Depends(get_db)):
 
 
 # --------------------------------------------------------------
-# 3️⃣ Buscar usuario por ID (GET)
+# Buscar usuario por ID (GET)
 # --------------------------------------------------------------
 @router.get("/{usuario_id}", response_model=schemas.Usuario)
 def obtener_usuario(usuario_id: int, db: Session = Depends(get_db)):
@@ -74,9 +75,58 @@ def obtener_usuario(usuario_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return usuario
 
+# GET todas las gamificaciones de un usuario
+@router.get("/{usuario_id}/gamificaciones", response_model=list[schemas.Gamificacion])
+def obtener_gamificaciones_usuario(usuario_id: int, db: Session = Depends(get_db)):
+    usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return usuario.gamificaciones
+
+# POST: crear gamificación para un usuario
+@router.post("/{usuario_id}/gamificaciones", response_model=schemas.Gamificacion)
+def crear_gamificacion_usuario(usuario_id: int, datos: schemas.GamificacionCreate, db: Session = Depends(get_db)):
+    usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    nueva_gamificacion = models.Gamificacion(
+        usuario_id=usuario.id,
+        badge=datos.badge,
+        puntos=datos.puntos
+    )
+    db.add(nueva_gamificacion)
+    db.commit()
+    db.refresh(nueva_gamificacion)
+    return nueva_gamificacion
+
+
+# GET todos los progresos de un usuario
+@router.get("/{usuario_id}/progresos", response_model=list[schemas.Progreso])
+def obtener_progresos_usuario(usuario_id: int, db: Session = Depends(get_db)):
+    usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return usuario.progresos
+
+# POST: crear progreso para un usuario
+@router.post("/{usuario_id}/progresos", response_model=schemas.Progreso)
+def crear_progreso_usuario(usuario_id: int, datos: schemas.ProgresoCreate, db: Session = Depends(get_db)):
+    usuario = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    nuevo_progreso = models.Progreso(
+        usuario_id=usuario.id,
+        reto_id=datos.reto_id,
+        completado=datos.completado,
+        fecha=datos.fecha
+    )
+    db.add(nuevo_progreso)
+    db.commit()
+    db.refresh(nuevo_progreso)
+    return nuevo_progreso
 
 # --------------------------------------------------------------
-# 4️⃣ Actualizar usuario (PUT)
+# Actualizar usuario (PUT)
 # --------------------------------------------------------------
 @router.put("/{usuario_id}", response_model=schemas.Usuario)
 def actualizar_usuario(usuario_id: int, datos: schemas.UsuarioCreate, db: Session = Depends(get_db)):
@@ -100,7 +150,7 @@ def actualizar_usuario(usuario_id: int, datos: schemas.UsuarioCreate, db: Sessio
 
 
 # --------------------------------------------------------------
-# 5️⃣ Eliminar usuario (DELETE)
+#  Eliminar usuario (DELETE)
 # --------------------------------------------------------------
 @router.delete("/{usuario_id}", status_code=status.HTTP_204_NO_CONTENT)
 def eliminar_usuario(usuario_id: int, db: Session = Depends(get_db)):

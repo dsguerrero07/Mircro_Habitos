@@ -28,6 +28,20 @@ class Usuario(Base):
     comunidades = relationship("Comunidad", back_populates="usuario")
 
 # --------------------------------------------------------
+# Tabla de Perfil
+# --------------------------------------------------------
+class Perfil(Base):
+    __tablename__ = "perfiles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    bio = Column(String, nullable=True)
+    nivel = Column(Integer, default=1)
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"))
+
+    usuario = relationship("Usuario", back_populates="perfil")
+
+
+# --------------------------------------------------------
 # Tabla de MicroRetos
 # --------------------------------------------------------
 class MicroReto(Base):
