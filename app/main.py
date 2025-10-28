@@ -5,7 +5,7 @@ Descripción: Inicia la aplicación FastAPI y conecta los routers
 """
 
 from fastapi import FastAPI
-from app import models, database
+from app import models , database
 from app.routers import usuarios
 from app.routers import microrretos
 from app.routers import progreso
