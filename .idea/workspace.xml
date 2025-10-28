@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ddcb2762-00e4-4762-b7e9-e60bd1b73ce5" name="Changes" comment="busqueda por nombre">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/plataforma.db" beforeDir="false" afterPath="$PROJECT_DIR$/plataforma.db" afterDir="false" />
-    </list>
+    <list default="true" id="ddcb2762-00e4-4762-b7e9-e60bd1b73ce5" name="Changes" comment="historial de eliminacion" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -169,7 +163,31 @@
       <option name="project" value="LOCAL" />
       <updated>1761338646830</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="historial de eliminacion">
+      <option name="closed" value="true" />
+      <created>1761695516286</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1761695516286</updated>
+    </task>
+    <task id="LOCAL-00012" summary="historial de eliminacion">
+      <option name="closed" value="true" />
+      <created>1761695626751</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1761695626751</updated>
+    </task>
+    <task id="LOCAL-00013" summary="historial de eliminacion">
+      <option name="closed" value="true" />
+      <created>1761695677039</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1761695677039</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -196,6 +214,7 @@
     <MESSAGE value="ceración del readme" />
     <MESSAGE value="eliminacion y restauracion de usuario eliminado" />
     <MESSAGE value="busqueda por nombre" />
-    <option name="LAST_COMMIT_MESSAGE" value="busqueda por nombre" />
+    <MESSAGE value="historial de eliminacion" />
+    <option name="LAST_COMMIT_MESSAGE" value="historial de eliminacion" />
   </component>
 </project>
