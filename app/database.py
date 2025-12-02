@@ -1,7 +1,3 @@
-"""
-Archivo: database.py
-Descripción: Configura la conexión con la base de datos (SQLite)
-"""
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
