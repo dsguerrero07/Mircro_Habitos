@@ -87,3 +87,10 @@ def generar_reporte_ranking(db: Session = Depends(get_db)):
         filename="ranking_usuarios.pdf",
         media_type="application/pdf"
     )
+
+@router.get("/vista")
+def vista_reportes(request: Request):
+    return templates.TemplateResponse(
+        "reportes.html",
+        {"request": request}
+    )
