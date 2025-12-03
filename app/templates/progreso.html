@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Progreso de Usuarios</h2>
+<a href="/progreso/nuevo">Registrar nuevo progreso</a>
+
+<table border="1">
+    <tr>
+        <th>Usuario</th>
+        <th>Reto</th>
+        <th>Completado</th>
+        <th>Fecha</th>
+    </tr>
+
+    {% for p in progresos %}
+    <tr>
+        <td>{{ p.usuario.nombre }}</td>
+        <td>{{ p.reto.contenido }}</td>
+        <td>{{ "✅" if p.completado else "❌" }}</td>
+        <td>{{ p.fecha }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

@@ -1,24 +1,54 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app import models
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
+from fastapi.responses import FileResponse
+import os
 
 router = APIRouter(
     prefix="/reportes",
     tags=["Reportes"]
 )
 
+templates = Jinja2Templates(directory="app/templates")
+
+# ==========================================================
+# ✅ DASHBOARD HTML
+# ==========================================================
+@router.get("/")
+def dashboard(request: Request, db: Session = Depends(get_db)):
+    total_usuarios = db.query(models.Usuario).count()
+    total_progresos = db.query(models.Progreso).count()
+    total_retos = db.query(models.MicroReto).count()
+
+    data = {
+        "usuarios": total_usuarios,
+        "progresos": total_progresos,
+        "retos": total_retos
+    }
+
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {"request": request, "data": data}
+    )
+
+# ==========================================================
+# ✅ GENERAR Y DESCARGAR PDF DE RANKING
+# ==========================================================
 @router.get("/ranking", summary="Genera un PDF con el ranking de usuarios por puntos")
 def generar_reporte_ranking(db: Session = Depends(get_db)):
 
-    # Obtener usuarios ordenados por puntos (descendente)
-    ranking = db.query(models.Gamificacion).order_by(models.Gamificacion.puntos.desc()).all()
+    ranking = db.query(models.Gamificacion).order_by(
+        models.Gamificacion.puntos.desc()
+    ).all()
 
-    # Crear archivo PDF
     archivo = "ranking_usuarios.pdf"
-    pdf = canvas.Canvas(archivo, pagesize=letter)
+    ruta = os.path.join(archivo)
+
+    pdf = canvas.Canvas(ruta, pagesize=letter)
 
     pdf.setFont("Helvetica-Bold", 16)
     pdf.drawString(150, 750, "Ranking de Usuarios por Puntos")
@@ -34,7 +64,9 @@ def generar_reporte_ranking(db: Session = Depends(get_db)):
     puesto = 1
 
     for item in ranking:
-        usuario = db.query(models.Usuario).filter(models.Usuario.id == item.usuario_id).first()
+        usuario = db.query(models.Usuario).filter(
+            models.Usuario.id == item.usuario_id
+        ).first()
 
         pdf.drawString(50, y, str(puesto))
         pdf.drawString(120, y, usuario.nombre)
@@ -50,4 +82,8 @@ def generar_reporte_ranking(db: Session = Depends(get_db)):
 
     pdf.save()
 
-    return {"mensaje": "Reporte generado exitosamente", "archivo": archivo}
+    return FileResponse(
+        path=ruta,
+        filename="ranking_usuarios.pdf",
+        media_type="application/pdf"
+    )
