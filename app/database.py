@@ -1,20 +1,24 @@
-
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import declarative_base
+from dotenv import load_dotenv
 
-# Dirección de la base de datos (se guarda en un archivo local)
-SQLALCHEMY_DATABASE_URL = "sqlite:///./plataforma.db"
+# Cargar variables del archivo .env
+load_dotenv()
 
-# Motor de conexión (permite conectarse a la base)
+# Leer la URL de la base de datos desde .env
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Crear motor para PostgreSQL (sin connect_args)
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    SQLALCHEMY_DATABASE_URL
 )
 
-# Sesión (permite ejecutar operaciones en la base)
+# Sesión (permite ejecutar operaciones en la BD)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Clase base para los modelos
+# Base de modelos
 Base = declarative_base()
 
 # Dependencia para usar DB en endpoints
