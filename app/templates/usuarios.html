@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Usuarios{% endblock %}
+
+{% block content %}
+<h2>Listado de Usuarios</h2>
+
+<a href="/usuarios/nuevo">Crear Nuevo Usuario</a>
+
+<ul>
+{% for usuario in usuarios %}
+    <li>{{ usuario.nombre }} - {{ usuario.email }}</li>
+{% endfor %}
+</ul>
+{% endblock %}
