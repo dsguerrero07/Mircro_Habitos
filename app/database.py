@@ -8,11 +8,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Leer la URL de la base de datos desde .env
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Crear motor para PostgreSQL (sin connect_args)
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL
+    DATABASE_URL
+    pool_pre_ping=True
+    connect_args={"sslmode": "require"}
 )
 
 # Sesión (permite ejecutar operaciones en la BD)
