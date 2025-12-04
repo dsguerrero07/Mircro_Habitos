@@ -1,16 +1,8 @@
-"""
-Archivo: models.py
-Descripción: Define las tablas de la base de datos y sus relaciones
-
-"""
-
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Table
 from sqlalchemy.orm import relationship
 from app.database import Base
 from datetime import datetime
-# --------------------------------------------------------
-# Tabla de Usuarios
-# --------------------------------------------------------
+
 class Usuario(Base):
     __tablename__ = "usuarios"
 
@@ -21,12 +13,8 @@ class Usuario(Base):
     nivel = Column(Integer, default=1)
     racha_dias = Column(Integer, default=0)
     puntos = Column(Integer, default=0)
-
-    foto = Column(String, nullable=False)
-
     activo = Column(Boolean, default=True)
 
-    # Relaciones
     progreso = relationship("Progreso", back_populates="usuario")
     gamificacion = relationship("Gamificacion", back_populates="usuario", uselist=False)
     comunidades = relationship("Comunidad", secondary="usuarios_comunidad", back_populates="participantes")
@@ -78,9 +66,6 @@ class Comunidad(Base):
 
     participantes = relationship("Usuario", secondary="usuarios_comunidad", back_populates="comunidades")
 
-
-# Tabla intermedia N:M para comunidad
-from sqlalchemy import Table, MetaData
 
 usuarios_comunidad = Table(
     "usuarios_comunidad",

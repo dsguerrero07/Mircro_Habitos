@@ -1,11 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request, Form, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from app import models, schemas
 from app.database import get_db
-import os
-import shutil
 
 router = APIRouter(
     prefix="/usuarios",
@@ -36,38 +34,23 @@ def formulario_usuario(request: Request):
     )
 
 # ==========================================================
-#  POST DESDE FORMULARIO HTML (CORREGIDO)
+#  POST DESDE FORMULARIO HTML (SIN FOTO)
 # ==========================================================
 @router.post("/crear-html")
 def crear_usuario_html(
     nombre: str = Form(...),
     edad: int = Form(...),
     categoria: str = Form(...),
-    foto: UploadFile = File(...),  # ✅ AHORA ES OBLIGATORIA
     db: Session = Depends(get_db)
 ):
     existe = db.query(models.Usuario).filter(models.Usuario.nombre == nombre).first()
     if existe:
         raise HTTPException(status_code=400, detail="El usuario ya existe")
 
-    # ✅ Crear carpeta si no existe (Render NO la crea sola)
-    carpeta = "app/static/uploads"
-    os.makedirs(carpeta, exist_ok=True)
-
-    ruta_foto_fisica = f"{carpeta}/{foto.filename}"
-
-    # ✅ Guardar archivo en disco
-    with open(ruta_foto_fisica, "wb") as buffer:
-        shutil.copyfileobj(foto.file, buffer)
-
-    ruta_foto_bd = f"/static/uploads/{foto.filename}"
-
-    # ✅ Guardar usuario en BD
     nuevo_usuario = models.Usuario(
         nombre=nombre,
         edad=edad,
         categoria=categoria,
-        foto=ruta_foto_bd,   # ✅ NUNCA ES NULL
         activo=True
     )
 
@@ -77,7 +60,7 @@ def crear_usuario_html(
     return RedirectResponse("/usuarios/vista", status_code=303)
 
 # ==========================================================
-#  API ORIGINAL (NO SE TOCA)
+#  API ORIGINAL
 # ==========================================================
 
 @router.post("/", response_model=schemas.Usuario, status_code=status.HTTP_201_CREATED)
@@ -113,9 +96,14 @@ def obtener_usuario(usuario_id: int, db: Session = Depends(get_db)):
 
 @router.get("/buscar/{nombre}", response_model=schemas.Usuario)
 def buscar_usuario_por_nombre(nombre: str, db: Session = Depends(get_db)):
-    usuario = db.query(models.Usuario).filter(models.Usuario.nombre == nombre, models.Usuario.activo == True).first()
+    usuario = db.query(models.Usuario).filter(
+        models.Usuario.nombre == nombre,
+        models.Usuario.activo == True
+    ).first()
+
     if not usuario:
         raise HTTPException(status_code=404, detail="No existe un usuario activo con ese nombre")
+
     return usuario
 
 
