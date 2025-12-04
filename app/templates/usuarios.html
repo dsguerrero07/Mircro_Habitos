@@ -4,11 +4,25 @@
 {% block content %}
 <h2>Listado de Usuarios</h2>
 
-<a href="/usuarios/nuevo">Crear Nuevo Usuario</a>
+<a href="/usuarios/nuevo">➕ Crear Nuevo Usuario</a>
 
-<ul>
-{% for usuario in usuarios %}
-    <li>{{ usuario.nombre }} - {{ usuario.email }}</li>
-{% endfor %}
-</ul>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Edad</th>
+        <th>Categoría</th>
+        <th>Puntos</th>
+    </tr>
+
+    {% for usuario in usuarios %}
+    <tr>
+        <td>{{ usuario.id }}</td>
+        <td>{{ usuario.nombre }}</td>
+        <td>{{ usuario.edad }}</td>
+        <td>{{ usuario.categoria }}</td>
+        <td>{{ usuario.puntos }}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}

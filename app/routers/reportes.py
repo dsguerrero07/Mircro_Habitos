@@ -16,7 +16,7 @@ router = APIRouter(
 templates = Jinja2Templates(directory="app/templates")
 
 # ==========================================================
-# ✅ DASHBOARD HTML
+#  DASHBOARD HTML
 # ==========================================================
 @router.get("/")
 def dashboard(request: Request, db: Session = Depends(get_db)):
@@ -36,7 +36,7 @@ def dashboard(request: Request, db: Session = Depends(get_db)):
     )
 
 # ==========================================================
-# ✅ GENERAR Y DESCARGAR PDF DE RANKING
+#  GENERAR Y DESCARGAR PDF DE RANKING
 # ==========================================================
 @router.get("/ranking", summary="Genera un PDF con el ranking de usuarios por puntos")
 def generar_reporte_ranking(db: Session = Depends(get_db)):

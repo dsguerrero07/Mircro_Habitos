@@ -9,7 +9,7 @@ router = APIRouter(prefix="/progreso", tags=["Progreso"])
 templates = Jinja2Templates(directory="app/templates")
 
 # ==========================================================
-# ✅ Vista HTML del progreso
+#  Vista HTML del progreso
 # ==========================================================
 @router.get("/vista")
 def ver_progreso(request: Request, db: Session = Depends(get_db)):
@@ -20,7 +20,7 @@ def ver_progreso(request: Request, db: Session = Depends(get_db)):
     )
 
 # ==========================================================
-# ✅ Formulario HTML
+#  Formulario HTML
 # ==========================================================
 @router.get("/nuevo")
 def nuevo_progreso(request: Request, db: Session = Depends(get_db)):
@@ -37,7 +37,7 @@ def nuevo_progreso(request: Request, db: Session = Depends(get_db)):
     )
 
 # ==========================================================
-# ✅ Guardar progreso desde HTML
+#  Guardar progreso desde HTML
 # ==========================================================
 @router.post("/crear-html")
 def crear_progreso_html(

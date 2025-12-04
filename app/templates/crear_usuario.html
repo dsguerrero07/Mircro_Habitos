@@ -1,10 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
+
 <h2>Crear Usuario</h2>
 
 <form action="/usuarios/crear-html" method="post">
+
+    <label>Nombre</label>
     <input type="text" name="nombre" placeholder="Nombre" required>
-    <input type="email" name="email" placeholder="Correo" required>
+
+    <label>Edad</label>
+    <input type="number" name="edad" placeholder="Edad" required>
+
+    <label>Categoría</label>
+    <input type="text" name="categoria" placeholder="Categoría" required>
+
     <button type="submit">Guardar</button>
+
 </form>
+
 {% endblock %}

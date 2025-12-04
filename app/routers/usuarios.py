@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request, Form
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from app import models, schemas
 from app.database import get_db
@@ -12,9 +13,9 @@ router = APIRouter(
 templates = Jinja2Templates(directory="app/templates")
 
 # ==========================================================
-# ✅ RENDER HTML: LISTADO DE USUARIOS
+#  VISTA HTML: LISTADO DE USUARIOS
 # ==========================================================
-@router.get("/vista", response_class=None)
+@router.get("/vista")
 def vista_usuarios(request: Request, db: Session = Depends(get_db)):
     usuarios = db.query(models.Usuario).filter(models.Usuario.activo == True).all()
     return templates.TemplateResponse(
@@ -23,7 +24,7 @@ def vista_usuarios(request: Request, db: Session = Depends(get_db)):
     )
 
 # ==========================================================
-# ✅ RENDER HTML: FORMULARIO CREAR USUARIO
+#  FORMULARIO HTML
 # ==========================================================
 @router.get("/nuevo")
 def formulario_usuario(request: Request):
@@ -33,12 +34,13 @@ def formulario_usuario(request: Request):
     )
 
 # ==========================================================
-# ✅ POST DESDE FORMULARIO HTML
+#  POST DESDE FORMULARIO HTML (CORREGIDO)
 # ==========================================================
 @router.post("/crear-html")
 def crear_usuario_html(
     nombre: str = Form(...),
-    email: str = Form(...),
+    edad: int = Form(...),
+    categoria: str = Form(...),
     db: Session = Depends(get_db)
 ):
     existe = db.query(models.Usuario).filter(models.Usuario.nombre == nombre).first()
@@ -47,18 +49,18 @@ def crear_usuario_html(
 
     nuevo_usuario = models.Usuario(
         nombre=nombre,
-        email=email,
+        edad=edad,
+        categoria=categoria,
         activo=True
     )
 
     db.add(nuevo_usuario)
     db.commit()
-    db.refresh(nuevo_usuario)
 
-    return {"mensaje": "Usuario creado correctamente desde HTML"}
+    return RedirectResponse("/usuarios/vista", status_code=303)
 
 # ==========================================================
-# ✅ API ORIGINAL (NO SE TOCA)
+#  API ORIGINAL (NO SE TOCA)
 # ==========================================================
 
 @router.post("/", response_model=schemas.Usuario, status_code=status.HTTP_201_CREATED)
