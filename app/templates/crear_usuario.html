@@ -1,19 +1,42 @@
-<form action="/usuarios/crear-html" method="post" >
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Usuario</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
 
-<input type="text" name="nombre" placeholder="Nombre" required>
-    
-    <input type="number" name="edad" placeholder="Edad" required> 
+<div class="form-container">
+    <h2>Crear Usuario</h2>
 
+    <form action="/usuarios/crear-html" method="post">
 
-    <select name="categoria" required>
-        <option value="">Seleccione categoría</option>
-        <option value="Programación">Programación</option>
-        <option value="Matemáticas">Matemáticas</option>
-        <option value="Inglés">Inglés</option>
-        <option value="Lectura">Lectura</option>
-    </select>
+        <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" name="nombre" required>
+        </div>
 
-    <input type="file" name="foto" accept="image/*" required>
+        <div class="form-group">
+            <label>Edad</label>
+            <input type="number" name="edad" required>
+        </div>
 
-    <button type="submit">Guardar</button>
-</form>
+        <div class="form-group">
+            <label>Categoría</label>
+            <select name="categoria" required>
+                <option value="">Seleccione categoría</option>
+                <option value="Salud">Salud</option>
+                <option value="Estudio">Estudio</option>
+                <option value="Disciplina">Disciplina</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-guardar">Guardar</button>
+        <input type="file" name="foto" accept="image/*" >
+
+    </form>
+</div>
+
+</body>
+</html>
