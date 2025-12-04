@@ -1,29 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2> Dashboard General</h2>
+<h2>Dashboard General</h2>
 
-<div class="dashboard-cards">
+<div class="dashboard-box">
     <div class="card">
-        <h3> Usuarios</h3>
-        <p>{{ data.usuarios }}</p>
+        <h3>{{ data.usuarios }}</h3>
+        <p>Total de Usuarios</p>
     </div>
 
     <div class="card">
-        <h3> Progresos</h3>
-        <p>{{ data.progresos }}</p>
-    </div>
-
-    <div class="card">
-        <h3> MicroRetos</h3>
-        <p>{{ data.retos }}</p>
+        <h3>{{ data.progresos }}</h3>
+        <p>Total de Progresos</p>
     </div>
 </div>
-
-<br>
-
-<a href="/reportes/ranking">
-    <button> Descargar Ranking en PDF</button>
-</a>
 
 {% endblock %}
