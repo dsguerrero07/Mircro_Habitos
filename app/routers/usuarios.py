@@ -49,8 +49,8 @@ def crear_usuario_html(
     if existe:
         raise HTTPException(status_code=400, detail="El usuario ya existe")
 
-    ruta = f"app/static/img/{foto.filename}"
-    with open(ruta, "wb") as buffer:
+    ruta_foto = f"app/static/img/{foto.filename}"
+    with open(ruta_foto, "wb") as buffer:
         buffer.write(foto.file.read())
 
     nuevo_usuario = models.Usuario(
