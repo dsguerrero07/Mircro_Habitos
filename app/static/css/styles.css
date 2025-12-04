@@ -1,0 +1,199 @@
+/* =========================
+   ESTILOS GENERALES
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+
+nav {
+    background-color: #1e293b;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+nav form {
+    margin-left: auto;
+    display: flex;
+    gap: 5px;
+}
+
+nav input {
+    padding: 6px;
+    border-radius: 4px;
+    border: none;
+}
+
+nav button {
+    padding: 6px 12px;
+    background-color: #38bdf8;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+nav button:hover {
+    background-color: #0ea5e9;
+}
+
+/* =========================
+   CONTENIDO PRINCIPAL
+========================= */
+
+main {
+    padding: 20px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+/* =========================
+   TITULOS
+========================= */
+
+h1, h2, h3 {
+    margin-bottom: 15px;
+    color: #1e293b;
+}
+
+/* =========================
+   FORMULARIOS
+========================= */
+
+form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 500px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+form input, form select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 6px;
+    margin-bottom: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+form button {
+    background-color: #22c55e;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+form button:hover {
+    background-color: #16a34a;
+}
+
+/* =========================
+   TABLAS
+========================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+table th {
+    background-color: #1e293b;
+    color: white;
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.dashboard-box {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.dashboard-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 250px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* =========================
+   LISTAS Y ENLACES
+========================= */
+
+ul {
+    margin-top: 15px;
+}
+
+ul li {
+    margin-bottom: 10px;
+}
+
+ul li a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+ul li a:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   MENSAJES
+========================= */
+
+.success {
+    color: green;
+    font-weight: bold;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+}
