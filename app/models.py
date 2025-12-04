@@ -22,6 +22,8 @@ class Usuario(Base):
     racha_dias = Column(Integer, default=0)
     puntos = Column(Integer, default=0)
 
+    foto = Column(String, nullable=False)
+
     activo = Column(Boolean, default=True)
 
     # Relaciones

@@ -4,7 +4,8 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from app import models, schemas
 from app.database import get_db
-
+import os
+import shutil
 
 router = APIRouter(
     prefix="/usuarios",
@@ -42,30 +43,39 @@ def crear_usuario_html(
     nombre: str = Form(...),
     edad: int = Form(...),
     categoria: str = Form(...),
-    foto: UploadFile = File(...),
+    foto: UploadFile = File(...),  # ✅ AHORA ES OBLIGATORIA
     db: Session = Depends(get_db)
 ):
     existe = db.query(models.Usuario).filter(models.Usuario.nombre == nombre).first()
     if existe:
         raise HTTPException(status_code=400, detail="El usuario ya existe")
 
-    ruta_foto = f"app/static/img/{foto.filename}"
-    with open(ruta_foto, "wb") as buffer:
-        buffer.write(foto.file.read())
+    # ✅ Crear carpeta si no existe (Render NO la crea sola)
+    carpeta = "app/static/uploads"
+    os.makedirs(carpeta, exist_ok=True)
 
+    ruta_foto_fisica = f"{carpeta}/{foto.filename}"
+
+    # ✅ Guardar archivo en disco
+    with open(ruta_foto_fisica, "wb") as buffer:
+        shutil.copyfileobj(foto.file, buffer)
+
+    ruta_foto_bd = f"/static/uploads/{foto.filename}"
+
+    # ✅ Guardar usuario en BD
     nuevo_usuario = models.Usuario(
         nombre=nombre,
         edad=edad,
         categoria=categoria,
-        foto=f"/static/img/{foto.filename}",
+        foto=ruta_foto_bd,   # ✅ NUNCA ES NULL
         activo=True
     )
 
     db.add(nuevo_usuario)
     db.commit()
-    db.refresh(nuevo_usuario)
 
     return RedirectResponse("/usuarios/vista", status_code=303)
+
 # ==========================================================
 #  API ORIGINAL (NO SE TOCA)
 # ==========================================================

@@ -1,7 +1,15 @@
 <form action="/usuarios/crear-html" method="post" enctype="multipart/form-data">
 
-    <input type="text" name="nombre" placeholder="Nombre" required>
+<input type="text" name="nombre" placeholder="Nombre" required>
+    
     <input type="number" name="edad" placeholder="Edad" required>
+    
+    <input type="text" name="categoria" placeholder="Categoría" required>
+    
+    <input type="file" name="foto" accept="image/*" required>
+
+    <button type="submit">Guardar</button>
+
 
     <select name="categoria" required>
         <option value="">Seleccione categoría</option>
