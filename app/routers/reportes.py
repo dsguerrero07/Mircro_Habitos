@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.database import get_db
 from app import models
 from reportlab.pdfgen import canvas
@@ -16,27 +17,27 @@ router = APIRouter(
 templates = Jinja2Templates(directory="app/templates")
 
 # ==========================================================
-#  DASHBOARD HTML
+#  DASHBOARD PRINCIPAL
 # ==========================================================
 @router.get("/")
 def dashboard(request: Request, db: Session = Depends(get_db)):
-    total_usuarios = db.query(models.Usuario).count()
-    total_progresos = db.query(models.Progreso).count()
-    total_retos = db.query(models.MicroReto).count()
 
-    data = {
-        "usuarios": total_usuarios,
-        "progresos": total_progresos,
-        "retos": total_retos
-    }
+    total_usuarios = db.query(func.count(models.Usuario.id)).scalar()
+    total_progresos = db.query(func.count(models.Progreso.id)).scalar()
+    total_retos = db.query(func.count(models.MicroReto.id)).scalar()
 
     return templates.TemplateResponse(
         "dashboard.html",
-        {"request": request, "data": data}
+        {
+            "request": request,
+            "usuarios": total_usuarios,
+            "progresos": total_progresos,
+            "retos": total_retos
+        }
     )
 
 # ==========================================================
-#  GENERAR Y DESCARGAR PDF DE RANKING
+#  GENERAR Y DESCARGAR PDF DE RANKING (MULTIMEDIA ✅)
 # ==========================================================
 @router.get("/ranking", summary="Genera un PDF con el ranking de usuarios por puntos")
 def generar_reporte_ranking(db: Session = Depends(get_db)):
@@ -45,16 +46,22 @@ def generar_reporte_ranking(db: Session = Depends(get_db)):
         models.Gamificacion.puntos.desc()
     ).all()
 
+    if not ranking:
+        raise HTTPException(status_code=404, detail="No hay datos para generar el ranking")
+
+    carpeta = "app/static/reportes"
+    os.makedirs(carpeta, exist_ok=True)
+
     archivo = "ranking_usuarios.pdf"
-    ruta = os.path.join(archivo)
+    ruta = os.path.join(carpeta, archivo)
 
     pdf = canvas.Canvas(ruta, pagesize=letter)
-
     pdf.setFont("Helvetica-Bold", 16)
     pdf.drawString(150, 750, "Ranking de Usuarios por Puntos")
 
     pdf.setFont("Helvetica", 12)
     y = 700
+
     pdf.drawString(50, y, "Puesto")
     pdf.drawString(120, y, "Usuario")
     pdf.drawString(300, y, "Puntos")
@@ -67,6 +74,9 @@ def generar_reporte_ranking(db: Session = Depends(get_db)):
         usuario = db.query(models.Usuario).filter(
             models.Usuario.id == item.usuario_id
         ).first()
+
+        if not usuario:
+            continue
 
         pdf.drawString(50, y, str(puesto))
         pdf.drawString(120, y, usuario.nombre)
@@ -88,6 +98,9 @@ def generar_reporte_ranking(db: Session = Depends(get_db)):
         media_type="application/pdf"
     )
 
+# ==========================================================
+#  VISTA HTML DE REPORTES
+# ==========================================================
 @router.get("/vista")
 def vista_reportes(request: Request):
     return templates.TemplateResponse(

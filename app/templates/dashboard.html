@@ -1,18 +1,35 @@
-{% extends "base.html" %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
 
-<h2>Dashboard General</h2>
+<h1> Dashboard de Reportes</h1>
 
-<div class="dashboard-box">
+<div class="contenedor">
+
     <div class="card">
-        <h3>{{ data.usuarios }}</h3>
-        <p>Total de Usuarios</p>
+        <h3>Total de Usuarios</h3>
+        <h2>{{ usuarios }}</h2>
     </div>
 
     <div class="card">
-        <h3>{{ data.progresos }}</h3>
-        <p>Total de Progresos</p>
+        <h3>Total de Progresos</h3>
+        <h2>{{ progresos }}</h2>
     </div>
+
+    <div class="card">
+        <h3>Total de Retos</h3>
+        <h2>{{ retos }}</h2>
+    </div>
+
 </div>
 
-{% endblock %}
+<br>
+<a href="/reportes/ranking" class="btn">📥 Descargar Ranking en PDF</a>
+
+</body>
+</html>
