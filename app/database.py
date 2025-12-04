@@ -1,7 +1,7 @@
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
 
 # Cargar variables del archivo .env
@@ -10,10 +10,9 @@ load_dotenv()
 # Leer la URL de la base de datos desde .env
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Crear motor para PostgreSQL (sin connect_args)
 engine = create_engine(
-    DATABASE_URL
-    pool_pre_ping=True
+    DATABASE_URL,
+    pool_pre_ping=True,
     connect_args={"sslmode": "require"}
 )
 

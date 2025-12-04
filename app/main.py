@@ -28,8 +28,6 @@ templates = Jinja2Templates(directory="app/templates")
 def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-#  Crear tablas en la base de datos
-models.Base.metadata.create_all(bind=database.engine)
 
 #  Conectar routers
 app.include_router(usuarios.router)
