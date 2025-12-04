@@ -9,6 +9,7 @@
 <table>
     <tr>
         <th>ID</th>
+        <th>Foto</th>
         <th>Nombre</th>
         <th>Edad</th>
         <th>Categoría</th>
@@ -18,6 +19,13 @@
     {% for usuario in usuarios %}
     <tr>
         <td>{{ usuario.id }}</td>
+        <td>
+            {% if usuario.foto %}
+                <img src="{{ usuario.foto }}" width="50">
+            {% else %}
+                Sin foto
+            {% endif %}
+        </td>
         <td>{{ usuario.nombre }}</td>
         <td>{{ usuario.edad }}</td>
         <td>{{ usuario.categoria }}</td>
@@ -25,4 +33,3 @@
     </tr>
     {% endfor %}
 </table>
-{% endblock %}

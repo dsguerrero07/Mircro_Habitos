@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request, Form
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Form, UploadFile, File
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from app import models, schemas
 from app.database import get_db
+import os
+import shutil
 
 router = APIRouter(
     prefix="/usuarios",
@@ -41,16 +43,30 @@ def crear_usuario_html(
     nombre: str = Form(...),
     edad: int = Form(...),
     categoria: str = Form(...),
+    foto: UploadFile = File(None),
     db: Session = Depends(get_db)
 ):
     existe = db.query(models.Usuario).filter(models.Usuario.nombre == nombre).first()
     if existe:
         raise HTTPException(status_code=400, detail="El usuario ya existe")
 
+    ruta_foto = None
+
+    if foto:
+        carpeta = "app/static/uploads"
+        os.makedirs(carpeta, exist_ok=True)
+
+        ruta_foto = f"{carpeta}/{foto.filename}"
+        with open(ruta_foto, "wb") as buffer:
+            shutil.copyfileobj(foto.file, buffer)
+
+        ruta_foto = f"/static/uploads/{foto.filename}"
+
     nuevo_usuario = models.Usuario(
         nombre=nombre,
         edad=edad,
         categoria=categoria,
+        foto=ruta_foto,
         activo=True
     )
 
@@ -58,7 +74,6 @@ def crear_usuario_html(
     db.commit()
 
     return RedirectResponse("/usuarios/vista", status_code=303)
-
 # ==========================================================
 #  API ORIGINAL (NO SE TOCA)
 # ==========================================================
